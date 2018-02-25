@@ -1,0 +1,228 @@
+<project name="The Clack Graphical Router Project" default="compile" basedir=".">
+
+
+<!-- ===================== Property Definitions =========================== -->
+
+	<property file="${basedir}/user.properties"/>
+
+	<property name="ant.home" value="${basedir}/lib"/>
+
+	<property name="app.name"      value="Clack"/>
+	<property name="app.version"   value="1.7.1"/>
+	<property name="build.home"    value="${basedir}/build"/>
+	<property name="dist.home"     value="${basedir}/dist"/>
+	<property name="main.class"     value="net.clackrouter.gui.ClackLoader"/>
+	<property name="retroweaver.home" value="${basedir}/retroweaver"/> 
+
+<!--  ==================== Compilation Control Options ==================== -->
+	<property name="compile.debug"       value="false"/>
+	<property name="compile.deprecation" value="false"/>
+	<property name="compile.optimize"    value="true"/>
+	
+	<taskdef name="retroweaver" classname="com.rc.retroweaver.ant.RetroWeaverTask">
+		<classpath>
+			<fileset dir="${retroweaver.home}/lib" includes="**/*"/>
+			<pathelement location="${retroweaver.home}/release/retroweaver-all-1.2.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="help" depends="usage"/>
+	
+	<target name="usage" >
+		<echo message=""/>
+		<echo message=""/>
+		<echo message="${app.name} Build instructions"/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message=" available targets are:"/>
+		<echo message=""/>
+		<echo message="   compile         --> compiles everything"/>
+    	<echo message="   test            --> compiles tests"/>
+    	<echo message="   start           --> start application"/>
+		<echo message="   dist            --> Package clack.jar clack-doc.jar and clack-src.jar"/>
+		<echo message="   doc             --> generates the API documentation"/>
+		<echo message="   clean           --> cleans up all generated files and directories"/>
+		<echo message="   usage           --> provides help on using the build tool (default)"/>
+		<echo message=""/>
+		<echo message=" See comments inside the build.xml file for more details."/>
+		<echo message="-------------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message=""/>
+	</target>
+
+	<target name="all" depends="clean,compile,dist"
+		description="Clean build and dist, then compile"/>
+      
+	<target name="prepare">
+		<tstamp/>
+
+		<mkdir dir="${build.home}"/>
+		<mkdir dir="${build.home}/classes"/>
+		<mkdir dir="${build.home}/classes/net/clackrouter/jgraph/pad/resources"/>
+		<mkdir dir="${build.home}/classes/net/clackrouter/descr"/>
+		<mkdir dir="${build.home}/docs"/>
+		<mkdir dir="${build.home}/test"/>
+		<mkdir dir="${build.home}/src"/>
+		<mkdir dir="${build.home}/lib"/>
+		<mkdir dir="${build.home}/src/Acme"/>
+		<mkdir dir="${build.home}/src/edu"/>
+		<mkdir dir="${build.home}/src/com"/>
+		<mkdir dir="${dist.home}"/>
+
+
+
+    	<copy  todir="${build.home}/classes/net/clackrouter/jgraph/pad/resources">
+    		<fileset dir="net/clackrouter/jgraph/pad/resources" includes="**/*.*" excludes="**/*.java"/>
+    	</copy>
+    	<copy  todir="${build.home}/classes/net/clackrouter/descr">
+    		<fileset dir="net/clackrouter/descr" includes="**/*.*" excludes="**/*.java"/>
+    	</copy>
+
+     	<copy todir="${build.home}/src/net">
+     		<fileset dir="net" includes="**/*.*" excludes="**/*.class"/>
+     	</copy>
+     	<copy todir="${build.home}/src/com">
+     		<fileset dir="com" >
+     		  <filename name="**/*.java"/>
+     		</fileset>
+     	</copy>
+     	<copy todir="${build.home}/classes/webserver">
+     		<fileset dir="webserver" >
+     		  <filename name="**/*"/>
+     		</fileset>
+     	</copy>
+     	<copy todir="${build.home}/classes/xml">
+     		<fileset dir="xml" >
+     		  <filename name="**/*"/>
+     		</fileset>
+     	</copy>
+
+     	<copy todir="${build.home}/src/Acme">
+     		<fileset dir="Acme" >
+     		  <filename name="**/*.java"/>
+     		</fileset>
+     	</copy>
+   
+ 
+	<delete>
+	  <fileset dir="${build.home}/src" includes="**/CVS"/>
+	</delete>
+
+	</target>
+
+	<target name="compile" depends="prepare">
+
+		<!-- Compile all the sources -->
+		<javac srcdir="${build.home}/src"
+			debug="${compile.debug}"
+			deprecation="${compile.deprecation}"
+			optimize="${compile.optimize}"
+			destdir="${build.home}/classes">
+
+			<classpath>
+				<pathelement location="${build.home}/classes"/>
+				<pathelement location="${basedir}/lib/jgraph.jar"/>
+				<pathelement location="${basedir}/lib/jgraphaddons.jar"/>
+				<pathelement location="${basedir}/lib/jfreechart-1.0.1.jar"/>
+				<pathelement location="${basedir}/lib/jcommon-1.0.0.jar"/>
+				<pathelement location="${basedir}/lib/crimson.jar"/>
+			</classpath>
+
+			<exclude name="**/SCCS/**"/>
+		</javac>
+		
+		
+		<!--Weave the code so it is java 1.4 compatible -->
+		<retroweaver >
+			<fileset dir="${build.home}/classes">
+			<include name="**/*.class"/>
+			</fileset>	
+		</retroweaver> 
+
+		<!--Make the clack.jar--> 
+		<unjar src="${basedir}/lib/jgraphaddons.jar" dest="${build.home}/classes"/>
+		<unjar src="${basedir}/lib/jfreechart-1.0.1.jar" dest="${build.home}/classes"/>
+		<unjar src="${basedir}/lib/jcommon-1.0.0.jar" dest="${build.home}/classes"/>
+		<unjar src="${basedir}/lib/jgraph.jar" dest="${build.home}/classes"/>
+		<unjar src="${basedir}/lib/crimson.jar" dest="${build.home}/classes"/>
+		<unjar src="${basedir}/lib/retroweaver-rt-1.2.jar" dest="${build.home}/classes/"/>
+		  <delete>
+		    <fileset dir="${build.home}/classes" includes="META-INF/*.*"/>
+		  </delete>
+		<jar jarfile="${build.home}/lib/clack-${app.version}.jar" basedir="${build.home}/classes" >
+			<include name="**"/>
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}"/>
+			</manifest>
+		</jar>
+		
+	</target>
+
+        <target name="sign" depends="compile" > 
+		<!--Sign the jar--> 
+		<!--- I don't care if anyone can steal this -->	
+		<signjar jar="${build.home}/lib/clack-${app.version}.jar"
+				keystore="${basedir}/clackkeystore" alias="clack"  storepass="stanford" />
+        </target> 
+
+
+	<target name="dist" depends="compile,sign,doc">
+          <mkdir dir="${dist.home}"/>
+
+		<!--Make the javadoc zip--> 
+		<zip zipfile="${dist.home}/clack-${app.version}-docs.zip">
+			<zipfileset dir="${build.home}/javadoc" prefix="clack-${app.version}-docs"/>
+		</zip>
+
+		<!--Make the clack-binaries zip--> 
+		<zip zipfile="${dist.home}/clack-${app.version}.zip">
+	    <zipfileset dir="${build.home}/lib" includes="clack-${app.version}.jar" prefix="clack-${app.version}/"/>
+	    <zipfileset dir="${basedir}" includes="LICENSE" prefix="clack-${app.version}/"/>
+		</zip>
+
+		<!-- Make source zip file -->
+		<zip zipfile="${dist.home}/clack-${app.version}-src.zip">
+		    <zipfileset dir="${basedir}/lib" includes="jgraph.jar" prefix="clack-${app.version}-src/lib"/>
+		    <zipfileset dir="${basedir}/lib" includes="jgraphaddons.jar" prefix="clack-${app.version}-src/lib"/>
+		    <zipfileset dir="${basedir}/lib" includes="jfreechart-1.0.1.jar" prefix="clack-${app.version}-src/lib"/>
+		    <zipfileset dir="${basedir}/lib" includes="jcommon-1.0.0.jar" prefix="clack-${app.version}-src/lib"/>
+		    <zipfileset dir="${basedir}/lib" includes="retroweaver-rt-1.2.jar" prefix="clack-${app.version}-src/lib"/>
+			<zipfileset dir="${basedir}/retroweaver" prefix="clack-${app.version}-src/retroweaver"/>
+			<zipfileset dir="${basedir}/lib" includes="crimson.jar" prefix="clack-${app.version}-src/lib"/>
+			<zipfileset dir="${basedir}" includes="LICENSE" prefix="clack-${app.version}-src/"/>
+			<zipfileset dir="${basedir}" includes="build.xml" prefix="clack-${app.version}-src/"/>
+
+			<zipfileset dir="${build.home}/src" prefix="clack-${app.version}-src/" excludes="net/clackrouter/component/courses/*.*" />			
+			<zipfileset dir="${basedir}/webserver" includes="*" prefix="clack-${app.version}-src/webserver" />
+			<zipfileset dir="${basedir}/xml" includes="*" prefix="clack-${app.version}-src/xml" />
+		</zip>
+	</target>
+
+        
+	<target name="doc" depends="prepare">
+		<javadoc packagenames="net.clackrouter.*"
+			classpath="${jgraphpad.classpath}" 
+			destdir="${build.home}/javadoc"
+			use="true"
+			author="false"
+			version="false"
+			excludepackagenames="net.clackrouter.component.courses.*"
+			windowtitle="Clack v${app.version} API Specification"
+			doctitle="Clack v${app.version} API Specification">
+		    <packageset dir="${build.home}/src" defaultexcludes="yes">
+		      <include name="net/clackrouter/**"/>
+		      <exclude name="net/clackrouter/component/courses/**"/>
+		    </packageset>
+			</javadoc>
+	</target>
+
+	<target name="clean" description="Delete old build and dist directories">
+                <delete dir="${build.home}/test"/>
+		<delete dir="${build.home}/classes"/>
+		<delete dir="${build.home}/javadoc"/>
+                <delete dir="${build.home}/"/>
+                <delete dir="${dist.home}/lib"/>
+                <delete dir="${dist.home}/"/>
+	</target>
+
+</project>

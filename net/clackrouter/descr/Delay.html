@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<title>Delay</title>
+
+<hr>
+
+<h1 class='NAME'><a name="NAME">Delay</a></h1>
+
+<p>Clack element;
+Introduces an additional configurable amount of delay for all packets passed through it. 
+</p>
+
+<h2><a name="PROCESSING+TYPE">PROCESSING TYPE</a></h2>
+<p>Pull</p>
+
+<h2><a name="DESCRIPTION">DESCRIPTION</a></h2>
+
+<p> Has one input and one output port, both of which are pull ports.  This
+element never initiates a pull, but rather only pulls on its input port when a connected elemented
+has pulled on its output port. This is so that it can be placed between an outgoing interface
+and the head of a queue.  Since Clack only queues packets in explicite queues, this is the only location 
+you should place it.  
+</p>
+<p>
+ A Delay element <i> adds </i> a specified amount of delay (in milliseconds) to all packets that flow through it.
+ It is important to realize that the actual delay experienced by the packet is the base latency experienced when 
+ the delay of this component is set to zero, plus whatever the configured delay is.  The Delay component tries its
+ best to be accurate to the delay time, but may sometimes introduce delays greater than the specified amount (but never less).  
+</p>
+<br>
+<hr>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<router>
+    <components>
+      <component class="net.clackrouter.component.extension.Delay" name="Delay 0" bounds="287:396:62:25">
+        <property key="delay" value="100" />
+      </component>
+      <component class="net.clackrouter.component.simplerouter.ARPDemux" name="ARPDemux 3" bounds="104:167:98:25" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceOut" name="ToDevice(eth2)" bounds="7:438:102:31" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceIn" name="FromDevice(eth0)" bounds="258:20:111:32" />
+      <component class="net.clackrouter.component.simplerouter.ARPLookup" name="ARPLookup 6" bounds="150:227:100:25" />
+      <component class="net.clackrouter.component.simplerouter.ICMPEcho" name="ICMPEchoResponder 15" bounds="465:209:154:25" />
+      <component class="net.clackrouter.component.simplerouter.Level2Demux" name="Level2Demux 5" bounds="99:119:110:25" />
+      <component class="net.clackrouter.component.extension.Loss" name="Loss 0" bounds="213:293:60:25">
+        <property key="loss" value="0" />
+      </component>
+      <component class="net.clackrouter.component.simplerouter.IPTTLDec" name="DecIPTTL 9" bounds="280:236:89:25" />
+      <component class="net.clackrouter.component.simplerouter.EtherStrip" name="EtherStrip 1" bounds="109:75:82:25" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceOut" name="ToDevice(eth1)" bounds="122:436:98:32" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceIn" name="FromDevice(eth1)" bounds="133:21:112:28" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceOut" name="ToDevice(eth0)" bounds="270:443:100:28" />
+      <component class="net.clackrouter.component.simplerouter.ICMPTTLExpired" name="ICMPTTLExpired 16" bounds="465:259:126:25" />
+      <component class="net.clackrouter.component.simplerouter.ICMPDemux" name="LocalICMPDemux 14" bounds="471:169:133:25" />
+      <component class="net.clackrouter.component.simplerouter.IPHeaderCheck" name="CheckIPHeader 7" bounds="263:116:122:25" />
+      <component class="net.clackrouter.component.simplerouter.ByteQueue" name="ByteQueue 11" bounds="145:335:35:80" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceIn" name="FromDevice(eth2)" bounds="13:20:110:26" />
+      <component class="net.clackrouter.component.simplerouter.IPRouteLookup" name="LookupIPRoute 8" bounds="265:175:120:25" />
+      <component class="net.clackrouter.component.simplerouter.ByteQueue" name="ByteQueue 10" bounds="302:296:35:80" />
+      <component class="net.clackrouter.component.simplerouter.ARPRespond" name="ARPRespond 4" bounds="25:227:110:25" />
+      <component class="net.clackrouter.component.simplerouter.Level3Demux" name="Level3Demux 13" bounds="484:126:110:25" />
+      <component class="net.clackrouter.component.simplerouter.EtherEncap" name="EtherEncap 0" bounds="101:284:90:25" />
+      <component class="net.clackrouter.component.extension.UDP" name="UDP 0" bounds="502:75:60:25" />
+      <component class="net.clackrouter.component.simplerouter.ByteQueue" name="ByteQueue 12" bounds="53:330:35:80" />
+    </components>
+    <wires>
+      <wire source_name="LocalICMPDemux 14" source_port="1" target_name="ICMPEchoResponder 15" target_port="0" />
+      <wire source_name="FromDevice(eth1)" source_port="0" target_name="EtherStrip 1" target_port="0" />
+      <wire source_name="ByteQueue 11" source_port="0" target_name="ToDevice(eth1)" target_port="0" />
+      <wire source_name="UDP 0" source_port="1" target_name="LookupIPRoute 8" target_port="0" />
+      <wire source_name="FromDevice(eth2)" source_port="0" target_name="EtherStrip 1" target_port="0" />
+      <wire source_name="ByteQueue 12" source_port="0" target_name="ToDevice(eth2)" target_port="0" />
+      <wire source_name="LookupIPRoute 8" source_port="2" target_name="Level3Demux 13" target_port="0" />
+      <wire source_name="Level2Demux 5" source_port="1" target_name="ARPDemux 3" target_port="0" />
+      <wire source_name="LookupIPRoute 8" source_port="3" target_name="DecIPTTL 9" target_port="0" />
+      <wire source_name="ARPDemux 3" source_port="2" target_name="ARPRespond 4" target_port="0" />
+      <wire source_name="CheckIPHeader 7" source_port="1" target_name="LookupIPRoute 8" target_port="0" />
+      <wire source_name="FromDevice(eth0)" source_port="0" target_name="EtherStrip 1" target_port="0" />
+      <wire source_name="EtherEncap 0" source_port="2" target_name="ByteQueue 11" target_port="1" />
+      <wire source_name="EtherEncap 0" source_port="1" target_name="ByteQueue 12" target_port="1" />
+      <wire source_name="Level2Demux 5" source_port="2" target_name="CheckIPHeader 7" target_port="0" />
+      <wire source_name="DecIPTTL 9" source_port="1" target_name="ARPLookup 6" target_port="1" />
+      <wire source_name="DecIPTTL 9" source_port="2" target_name="ICMPTTLExpired 16" target_port="0" />
+      <wire source_name="Loss 0" source_port="1" target_name="ByteQueue 10" target_port="1" />
+      <wire source_name="ICMPTTLExpired 16" source_port="1" target_name="LookupIPRoute 8" target_port="0" />
+      <wire source_name="ARPDemux 3" source_port="1" target_name="ARPLookup 6" target_port="0" />
+      <wire source_name="ARPLookup 6" source_port="2" target_name="EtherEncap 0" target_port="0" />
+      <wire source_name="Level3Demux 13" source_port="2" target_name="UDP 0" target_port="0" />
+      <wire source_name="ICMPEchoResponder 15" source_port="1" target_name="LookupIPRoute 8" target_port="0" />
+      <wire source_name="ARPRespond 4" source_port="1" target_name="EtherEncap 0" target_port="0" />
+      <wire source_name="EtherEncap 0" source_port="3" target_name="Loss 0" target_port="0" />
+      <wire source_name="Delay 0" source_port="1" target_name="ToDevice(eth0)" target_port="0" />
+      <wire source_name="ByteQueue 10" source_port="0" target_name="Delay 0" target_port="0" />
+      <wire source_name="EtherStrip 1" source_port="1" target_name="Level2Demux 5" target_port="0" />
+      <wire source_name="Level3Demux 13" source_port="3" target_name="LocalICMPDemux 14" target_port="0" />
+    </wires>
+</router>
+

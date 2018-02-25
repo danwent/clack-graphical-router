@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<title>ARPLookup</title>
+
+<hr>
+
+<h1 class='NAME'><a name="NAME">ARPLookup</a></h1>
+<small color="red">(Documentation adapted from Click website: 
+http://www.pdos.lcs.mit.edu/click/doc/ARPQuerier.n.html) </small>
+
+<p>Clack element;
+Contains ARP cache and handles querying for unknown hardware addresses.
+</p>
+
+
+<h2><a name="PROCESSING+TYPE">PROCESSING TYPE</a></h2>
+<p>Push
+</p>
+
+<h2><a name="DESCRIPTION">DESCRIPTION</a></h2>
+<p> An ARPLookup element contains the ARP cache, which is a per-interface collection of IP address to
+Hardware address mappings for hosts on the same link as that interface.
+</p>
+<p> This element has two input ports.  One is for outgoing IP packets that need to be encapsulated in
+Ethernet headers with the hardware address associated with the IP next hop address.  This address is found
+by performing a lookup in the element's ARP cache.  If no entry is found, the outgoing packet is queued within
+the element while the ARPLookup generates an ARP Request and awaits the reply. 
+</p>
+<p> The second input port is for incoming ARP Reply packets, stripped of their Ethernet header.  
+When a Reply is receieved, the mapping is added
+to the ARP cache and any IP packets waiting for the resolution of that address are immeadiately sent.  
+</p>
+<p>  The element has a single output port which pushes out both Ethernet encapsulated IP packets and Ethernet
+encapsulated ARP Request packets.
+</p>  
+
+
+<br>
+
+<hr>
+
+</body>
+</html>

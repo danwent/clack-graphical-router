@@ -1,0 +1,68 @@
+  <router name="default four interface" >
+    <components>
+      <component class="net.clackrouter.component.simplerouter.InterfaceIn" name="FromDevice(eth0)" bounds="150:12:126:26" />
+      <component class="net.clackrouter.component.simplerouter.ARPRespond" name="ARPRespond 3" bounds="263:209:97:25" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceIn" name="FromDevice(eth2)" bounds="411:12:103:29" />
+      <component class="net.clackrouter.component.simplerouter.EtherEncap" name="EtherEncap 1" bounds="354:262:90:25" />
+      <component class="net.clackrouter.component.simplerouter.ByteQueue" name="ByteQueue 1" bounds="463:298:35:80">
+        <property key="max_size" value="10000" />
+      </component>
+      <component class="net.clackrouter.component.simplerouter.ByteQueue" name="ByteQueue 3" bounds="549:270:35:80">
+        <property key="max_size" value="10000" />
+      </component>
+      <component class="net.clackrouter.component.simplerouter.InterfaceIn" name="FromDevice(eth1)" bounds="282:12:120:28" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceOut" name="ToDevice(eth1)" bounds="322:402:118:28" />
+      <component class="net.clackrouter.component.simplerouter.EtherStrip" name="EtherStrip 0" bounds="355:71:83:25" />
+      <component class="net.clackrouter.component.simplerouter.IPHeaderCheck" name="IPHeaderCheck 4" bounds="499:111:109:25" />
+      <component class="net.clackrouter.component.simplerouter.ICMPTTLExpired" name="ICMPTTLExpired 0" bounds="658:220:113:25" />
+      <component class="net.clackrouter.component.simplerouter.ByteQueue" name="ByteQueue 0" bounds="362:304:35:80">
+        <property key="max_size" value="10000" />
+      </component>
+      <component class="net.clackrouter.component.simplerouter.InterfaceIn" name="FromDevice(eth3)" bounds="531:13:109:29" />
+      <component class="net.clackrouter.component.simplerouter.ARPLookup" name="ARPLookup 2" bounds="430:211:89:25" />
+      <component class="net.clackrouter.component.simplerouter.ByteQueue" name="ByteQueue 2" bounds="249:290:35:80">
+        <property key="max_size" value="10000" />
+      </component>
+      <component class="net.clackrouter.component.simplerouter.Level2Demux" name="Level2Demux 0" bounds="345:120:99:25" />
+      <component class="net.clackrouter.component.simplerouter.ICMPEcho" name="ICMPEcho 2" bounds="710:57:83:25" />
+      <component class="net.clackrouter.component.simplerouter.IPRouteLookup" name="IPRouteLookup 5" bounds="573:162:108:25" />
+      <component class="net.clackrouter.component.simplerouter.ARPDemux" name="ARPDemux 1" bounds="354:169:88:25" />
+      <component class="net.clackrouter.component.simplerouter.IPTTLDec" name="IPTTLDec 6" bounds="540:211:80:25" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceOut" name="ToDevice(eth2)" bounds="454:399:108:30" />
+      <component class="net.clackrouter.component.simplerouter.ICMPDemux" name="ICMPDemux 1" bounds="816:105:93:25" />
+      <component class="net.clackrouter.component.simplerouter.Level3Demux" name="Level3Demux 0" bounds="749:160:99:25" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceOut" name="ToDevice(eth0)" bounds="188:404:119:27" />
+      <component class="net.clackrouter.component.simplerouter.InterfaceOut" name="ToDevice(eth3)" bounds="580:400:118:28" />
+    </components>
+    <wires>
+      <wire source_name="ByteQueue 1" source_port="0" target_name="ToDevice(eth2)" target_port="0" />
+      <wire source_name="IPRouteLookup 5" source_port="2" target_name="Level3Demux 0" target_port="0" />
+      <wire source_name="IPRouteLookup 5" source_port="3" target_name="IPTTLDec 6" target_port="0" />
+      <wire source_name="ByteQueue 2" source_port="0" target_name="ToDevice(eth0)" target_port="0" />
+      <wire source_name="EtherEncap 1" source_port="2" target_name="ByteQueue 1" target_port="1" />
+      <wire source_name="ARPDemux 1" source_port="1" target_name="ARPLookup 2" target_port="0" />
+      <wire source_name="Level2Demux 0" source_port="2" target_name="IPHeaderCheck 4" target_port="0" />
+      <wire source_name="ICMPEcho 2" source_port="1" target_name="IPRouteLookup 5" target_port="0" />
+      <wire source_name="ICMPTTLExpired 0" source_port="1" target_name="IPRouteLookup 5" target_port="0" />
+      <wire source_name="ARPDemux 1" source_port="2" target_name="ARPRespond 3" target_port="0" />
+      <wire source_name="IPHeaderCheck 4" source_port="1" target_name="IPRouteLookup 5" target_port="0" />
+      <wire source_name="IPTTLDec 6" source_port="2" target_name="ICMPTTLExpired 0" target_port="0" />
+      <wire source_name="Level2Demux 0" source_port="1" target_name="ARPDemux 1" target_port="0" />
+      <wire source_name="Level3Demux 0" source_port="3" target_name="ICMPDemux 1" target_port="0" />
+      <wire source_name="ARPLookup 2" source_port="2" target_name="EtherEncap 1" target_port="0" />
+      <wire source_name="FromDevice(eth0)" source_port="0" target_name="EtherStrip 0" target_port="0" />
+      <wire source_name="FromDevice(eth1)" source_port="0" target_name="EtherStrip 0" target_port="0" />
+      <wire source_name="ByteQueue 0" source_port="0" target_name="ToDevice(eth1)" target_port="0" />
+      <wire source_name="ICMPDemux 1" source_port="3" target_name="ICMPEcho 2" target_port="0" />
+      <wire source_name="ICMPDemux 1" source_port="1" target_name="ICMPEcho 2" target_port="0" />
+      <wire source_name="EtherEncap 1" source_port="4" target_name="ByteQueue 2" target_port="1" />
+      <wire source_name="ARPRespond 3" source_port="1" target_name="EtherEncap 1" target_port="0" />
+      <wire source_name="ByteQueue 3" source_port="0" target_name="ToDevice(eth3)" target_port="0" />
+      <wire source_name="EtherStrip 0" source_port="1" target_name="Level2Demux 0" target_port="0" />
+      <wire source_name="EtherEncap 1" source_port="1" target_name="ByteQueue 3" target_port="1" />
+      <wire source_name="EtherEncap 1" source_port="3" target_name="ByteQueue 0" target_port="1" />
+      <wire source_name="FromDevice(eth2)" source_port="0" target_name="EtherStrip 0" target_port="0" />
+      <wire source_name="IPTTLDec 6" source_port="1" target_name="ARPLookup 2" target_port="1" />
+      <wire source_name="FromDevice(eth3)" source_port="0" target_name="EtherStrip 0" target_port="0" />
+    </wires>
+  </router>

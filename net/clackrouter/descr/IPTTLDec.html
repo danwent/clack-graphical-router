@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<title>IPTTLDec</title>
+
+<hr>
+
+<h1 class='NAME'><a name="NAME">IPTTLDec</a></h1>
+<small color="red">(Documentation adapted from Click website: 
+http://www.pdos.lcs.mit.edu/click/doc/DecIPTTL.n.html) </small>
+
+<p>Clack element;
+Attempts to decrement the Time-To-Live field of the IP header.
+</p>
+
+<h2><a name="PROCESSING+TYPE">PROCESSING TYPE</a></h2>
+<p>Push
+</p>
+
+<h2><a name="DESCRIPTION">DESCRIPTION</a></h2>
+<p> 
+Expects IP packet as input. If the ttl is <= 1 (i.e. has expired), DecIPTTL 
+sends the packet to one output port (ordinarily connected to an ICMP error packet generating element). 
+Otherwise it decrements the ttl, re-calculates the checksum, and sends the packet to the other output.
+
+</p>
+
+<br>
+
+<hr>
+
+</body>
+</html>

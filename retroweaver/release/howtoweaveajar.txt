@@ -1,0 +1,1 @@
+java -cp release\retroweaver-<version>.jar;lib\asm-2.2.jar;lib\asm-commons-2.2.jar com.rc.retroweaver.Weaver -jar input.jar output.jar

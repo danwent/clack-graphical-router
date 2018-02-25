@@ -1,0 +1,110 @@
+
+package net.clackrouter.component.extension;
+
+import java.awt.Color;
+import java.util.Enumeration;
+import java.util.Properties;
+
+import javax.swing.JPanel;
+
+import net.clackrouter.component.base.ClackComponent;
+import net.clackrouter.component.base.ClackPort;
+import net.clackrouter.packets.VNSPacket;
+import net.clackrouter.propertyview.ThrottlePView;
+import net.clackrouter.propertyview.TCPMonitorPopup;
+import net.clackrouter.router.core.Router;
+
+
+
+public class Throttle extends ClackComponent {
+	
+	
+	public static int PORT_IN = 0,PORT_OUT = 1, NUM_PORTS = 2;
+	
+	public static int DEFAULT_RATE = 128; 
+	private int throttle_rate; // in kbps 
+	private long next_tx_msec; 
+	
+	public Throttle(Router r, String name){
+		this(r,name, DEFAULT_RATE);
+	}
+	
+	public Throttle(Router r, String name, int rate)
+    {
+		super(r, name);
+		throttle_rate = rate;
+		next_tx_msec = 0; 
+		setupPorts(NUM_PORTS);
+    }
+	
+	
+    protected void setupPorts(int numports)
+    {
+    	super.setupPorts(numports);
+        String in_desc = "Packets entering throttle element";
+        String out_desc     = "Packets leaving throttle element";
+        m_ports[PORT_IN] = new ClackPort(this, PORT_IN, in_desc, ClackPort.METHOD_PULL, ClackPort.DIR_IN, VNSPacket.class);
+        m_ports[PORT_OUT]     = new ClackPort(this, PORT_OUT, out_desc, ClackPort.METHOD_PULL, ClackPort.DIR_OUT, VNSPacket.class);
+    } // -- setupPorts
+    
+    public boolean isModifying() { return false; }
+    
+    /**
+     * Does not buffer components on its own, but rather performs a simple
+     * calculation to decide when to pass on the pull request on its output
+     * port on to the component connected to its input port.  
+     */
+	   public VNSPacket handlePullRequest(int port_number) { 
+
+	        if (port_number != PORT_OUT)
+	        { 		
+	        	error( "Received packet on invalid port: " + port_number);
+	        	return null;
+	        }
+	    	// technically these should use the "internal" clack clock, but that doesn't work well in practice
+	    	long cur_time_msec = System.currentTimeMillis();
+	        if(cur_time_msec < next_tx_msec || throttle_rate == 0)
+	        	return null; 
+	        
+	        // time for us to try and transmit another packet
+			VNSPacket p = m_ports[PORT_IN].pullIn();
+	        if(p != null) { 
+	        	// note: throttle rate is in kbps, time is in msec to 1000's cancel out
+	        	long tx_time = (p.getLength() * 8) / throttle_rate;  
+	        	next_tx_msec = cur_time_msec + tx_time; 
+	        }
+	        return p;
+	    }
+	   
+	    public JPanel getPropertiesView(){	return new ThrottlePView(this); }  
+	    
+	    /** Serialize the delay value for reloading the router */
+	    public Properties getSerializableProperties(boolean isTransient){
+	    	Properties props = super.getSerializableProperties(isTransient);
+	    	props.setProperty("rate", "" + throttle_rate);
+	    	return props;
+	    }
+	    
+	    /** Load the saved delay value */
+		public void initializeProperties(Properties props) {
+			for(Enumeration e = props.keys(); e.hasMoreElements(); ){
+				String key = (String)e.nextElement();
+				String value = props.getProperty(key);
+				if(key.equals("rate")){
+					try{ 
+						throttle_rate = Integer.parseInt(value);
+					}catch (Exception ex){
+						ex.printStackTrace();
+					}
+				}
+			}
+		}
+	    public Color getColor() { return Color.PINK; }
+	    
+	    /** Sets rate in kbps  */
+	    public void setSendingRate(int r) { 
+	    	if(r < 0) r = 0;
+	    	throttle_rate = r; 
+	    }
+	    public int getSendingRate() { return throttle_rate; } 
+}
