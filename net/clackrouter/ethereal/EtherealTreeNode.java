@@ -49,9 +49,9 @@ public class EtherealTreeNode extends DefaultMutableTreeNode {
 		hexStart += len;
 		hexEnd += len;
 		
-		Enumeration<EtherealTreeNode> en = children();
+		Enumeration en = children();
 		while (en.hasMoreElements()) {
-			EtherealTreeNode node = en.nextElement();
+			EtherealTreeNode node = (EtherealTreeNode) en.nextElement();
 			node.ofset(len);
 		}
 		return this;

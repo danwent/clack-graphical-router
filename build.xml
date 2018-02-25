@@ -132,13 +132,6 @@
 		</javac>
 		
 		
-		<!--Weave the code so it is java 1.4 compatible -->
-		<retroweaver >
-			<fileset dir="${build.home}/classes">
-			<include name="**/*.class"/>
-			</fileset>	
-		</retroweaver> 
-
 		<!--Make the clack.jar--> 
 		<unjar src="${basedir}/lib/jgraphaddons.jar" dest="${build.home}/classes"/>
 		<unjar src="${basedir}/lib/jfreechart-1.0.1.jar" dest="${build.home}/classes"/>

@@ -100,9 +100,9 @@ public class EtherealPacket {
 		}
 		
 		corelation = new EtherealTreeNode[packet.getLength()];
-		Enumeration<EtherealTreeNode> en = tree.breadthFirstEnumeration();
+		Enumeration en = tree.breadthFirstEnumeration();
 		while (en.hasMoreElements()) {
-			EtherealTreeNode node = en.nextElement();
+			EtherealTreeNode node = (EtherealTreeNode) en.nextElement();
 			for (int i=node.hexStart; i<node.hexEnd; i++) {
 				corelation[i] = node;
 			}
